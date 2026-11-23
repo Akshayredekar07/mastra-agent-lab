@@ -27,6 +27,8 @@ memory.db-*
 .env
 .env.*
 !.env.example
+node_modules/
+dist/
 
 # Logs
 *.log
