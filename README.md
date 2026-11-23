@@ -142,7 +142,7 @@ export const mastra = new Mastra({
 - [Roadmap](./docs/00-roadmap.md)
 - [Architecture decisions](./docs/01-architecture-decisions.md)
 - [Evaluation checklist](./docs/02-evaluation-checklist.md)
-- [Production checklist](./docs/03-production-checklist.md)
+
 
 ---
 
