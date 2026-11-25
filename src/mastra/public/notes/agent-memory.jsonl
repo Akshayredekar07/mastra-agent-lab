@@ -1,0 +1,6 @@
+{"type":"entity","name":"Akshay","entityType":"person","observations":["User's name is Akshay.","Akshay is learning the Mastra framework.","Akshay prefers concise answers that include source URLs (per local notes/research-notes.md)."]}
+{"type":"entity","name":"Mastra","entityType":"framework","observations":["TypeScript framework for building AI agents; agents can use tools, memory, and workflows.","Mastra Studio runs locally at http://localhost:4111.","Akshay is currently learning Mastra."]}
+{"type":"entity","name":"mastra-agent-lab","entityType":"project","observations":["Local Mastra project at D:\\mastra-agent-lab.","Contains notes folder at D:\\mastra-agent-lab\\src\\mastra\\public\\notes with research-notes.md and .trash/temp.sh."]}
+{"type":"relation","from":"Akshay","to":"Mastra","relationType":"is_learning"}
+{"type":"relation","from":"Akshay","to":"mastra-agent-lab","relationType":"works_on"}
+{"type":"relation","from":"mastra-agent-lab","to":"Mastra","relationType":"uses"}

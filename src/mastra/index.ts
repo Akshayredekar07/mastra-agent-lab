@@ -16,6 +16,8 @@ import {
 // import agents
 import { researchAgent } from "./agents/research-agent";
 import { weatherAgent } from "./agents/weather-agent";
+import { newResearchAgent } from "./agents/new-research-agent";
+import { supervisorAgent } from "./agents/supervisor-agent"
 
 export const mastra = new Mastra({
     storage: new MastraCompositeStore({
@@ -49,6 +51,8 @@ export const mastra = new Mastra({
     // agents
     agents: {
         researchAgent,
+        newResearchAgent,
         weatherAgent,
+        supervisorAgent,
     },
 });
