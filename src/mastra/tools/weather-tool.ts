@@ -1,5 +1,6 @@
 import { createTool } from '@mastra/core/tools';
 import { z } from 'zod';
+import { fa } from 'zod/locales';
 
 export const weatherTool = createTool({
   id: 'weather-tool',
@@ -15,7 +16,7 @@ export const weatherTool = createTool({
     conditions: z.string(),
   }),
 
-  requireApproval: true, // correct
+  requireApproval: false, // correct
 
   // Optional tool-level lifecycle hooks
   onInputAvailable: ({ input }) => {

@@ -23,6 +23,14 @@ out/
 memory.db
 memory.db-*
 
+# DuckDB runtime data — never commit these.
+# A live DuckDB file grows past GitHub's 100 MB per-file push limit and the
+# remote rejects the whole push. `*.db` below does NOT match `*.duckdb`.
+*.duckdb
+*.duckdb.*
+*.ddb
+*.ddb.*
+
 # Environment variables
 .env
 .env.*
@@ -65,3 +73,7 @@ Thumbs.db
 serviceAccount.json
 mastra-cli.json
 opencode.json
+
+
+traces/
+traces/*

@@ -7,14 +7,16 @@
     "dev": "mastra dev",
     "script": "tsx watch src/index.ts",
     "start": "tsx src/index.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "trace:filter": "node scripts/filter-trace.mjs traces --report"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^3.0.94",
     "@mastra/core": "^1.86.0",
     "@mastra/duckdb": "^1.19.1",
-    "@mastra/libsql": "^1.31.1",
+    "@mastra/libsql": "^1.32.0",
     "@mastra/mcp": "^2.11.0",
+    "@mastra/memory": "^1.41.3",
     "@mastra/observability": "^1.24.2",
     "dotenv": "^18.0.10",
     "zod": "^4.6.7"

@@ -1,5 +1,8 @@
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { Agent } from "@mastra/core/agent";
+import { Memory } from "@mastra/memory";
+import { LibSQLStore } from "@mastra/libsql";
+import { z } from "zod";
 
 import { exaSearchTool } from "../tools/exa-search-tool.ts";
 import { tinyFishSearchTool } from "../tools/tinyfish-search-tool.ts";
@@ -14,7 +17,6 @@ import { fetchMcpClient } from "../mcp/fetch-client.ts";
 import { gitMcpClient } from "../mcp/git-client.ts"
 import { timeMcpClient } from "../mcp/time-client.ts";
 import { sequentialThinkingMcpClient } from "../mcp/sequential-thinking-client.ts"
-
 
 // load env
 
@@ -46,6 +48,43 @@ const nebius = createOpenAICompatible({
 
 const nebiusModelInstance = nebius(nebiusModel);
 
+// ── Memory ──
+//    Message history keeps recent turns, working memory keeps stable user facts.
+//    Storage lives in its own file so it works without touching the Mastra instance.
+//    If your Mastra instance already sets storage, you can drop the storage line.
+const userProfileSchema = z.object({
+  name: z.string().optional(),
+  role: z.string().optional(),
+  interests: z.array(z.string()).optional(),
+  currentProject: z.string().optional(),
+  preferences: z
+    .object({
+      answerStyle: z.string().optional(),
+      languages: z.array(z.string()).optional(),
+    })
+    .optional(),
+});
+
+const agentMemory = new Memory({
+  storage: new LibSQLStore({
+    id: "research-agent-memory",
+    url: "file:./memory.db",
+  }),
+  options: {
+    // Recent turns, capped by tokens so large tool results cannot flood the context.
+    messageHistory: { maxTokens: 12_000, atMaxRemoveTokens: 3_000 },
+
+    // Persistent facts about the user, shared across all threads of the same resource.
+    workingMemory: {
+      enabled: true,
+      scope: "resource",
+      schema: userProfileSchema,
+    },
+
+    generateTitle: true,
+  },
+});
+
 export const researchAgent = new Agent({
   id: "research-agent",
   name: "Research Agent",
@@ -74,6 +113,13 @@ Tool rules:
 - If evidence is insufficient, clearly say what is missing.
 - Do not claim to have used a tool if it was not actually invoked.
 
+Memory rules:
+- Earlier messages in this conversation are already in your context. Use them for follow-up questions.
+- Working memory holds stable facts about the user. Update it only when the user states a lasting fact or preference, such as their name, role, interests, current project, or preferred answer style.
+- Never store one-off questions, search results, or temporary task details in working memory.
+- The memory MCP tools are a separate knowledge graph. Use them only if the user explicitly asks to store or look up something in that graph.
+- Do not mention working memory or how memory works unless the user asks.
+
 Response rules:
 - Give a direct answer first.
 - Use concise, beginner-friendly explanations.
@@ -83,6 +129,8 @@ Response rules:
 `,
 
   model: nebiusModelInstance,
+
+  memory: agentMemory,
 
   tools: {
     exaSearchTool,
