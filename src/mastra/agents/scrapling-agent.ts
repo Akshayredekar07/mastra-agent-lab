@@ -2,12 +2,21 @@
 import { Agent } from "@mastra/core/agent";
 import { nebiusModelInstance } from "../llm/nebius.ts";
 import { scraplingMcpClient } from "../mcp/scrapling-client.ts";
+import { capToolOutput } from "../tools/cap-tool-output.ts";
 
 const scraplingTools = await scraplingMcpClient
   .listToolsWithErrors()
   .then((result) => {
     console.log("SCRAPLING TOOLS:", Object.keys(result.tools));
     console.log("SCRAPLING ERRORS:", result.errors);
+
+    // Bound what each tool hands back to the model. One raw HTML page ran a
+    // prompt to 1.1M tokens and aborted the run with
+    // "The input (1109215 tokens) is longer than the model's context length".
+    for (const tool of Object.values(result.tools)) {
+      capToolOutput(tool);
+    }
+
     return result.tools;
   });
 
@@ -34,6 +43,9 @@ Rules:
 - If a page cannot be fetched, explain what failed.
 - Prefer the smallest number of requests needed.
 - Return the final content, not your internal tool process.
+- Prefer extraction_type "markdown". Use "html" only when the raw markup is
+  actually needed — a full HTML page is very large and gets truncated for you.
+- Never ask for the same page twice.
 `,
 
   model: nebiusModelInstance,

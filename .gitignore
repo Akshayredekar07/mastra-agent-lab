@@ -77,3 +77,6 @@ opencode.json
 
 traces/
 traces/*
+
+# Scratch scripts (tmp/)
+tmp/
